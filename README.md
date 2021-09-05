@@ -2,11 +2,6 @@
 
 <img src="icons/linode.svg" width="128" height="128">
 
-node-red-contrib-linode
-=======================
-
-Use Linode API to provides the ability to programmatically manage the full range of Linode products and services / Swagger with Node-Red.
-
 It is based on [Linode API v4.102.0](https://www.linode.com/docs/api) and [swagger-js](https://github.com/swagger-api/swagger-js).
 
 
