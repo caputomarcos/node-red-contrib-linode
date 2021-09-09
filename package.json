@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-linode",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "Use Linode API to provides the ability to programmatically manage the full range of Linode products and services / Swagger with Node-Red.",
   "author": "Marcos Caputo",
   "contributors": [
