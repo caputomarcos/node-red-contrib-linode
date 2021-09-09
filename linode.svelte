@@ -1,6 +1,6 @@
 <script context='module'>
   RED.nodes.registerType('linode', {
-     category: 'network',
+     category: 'DevSecOps',
      color: '#fff',
      defaults: {
         name: 			{ value: '',  label: 'Name' },
