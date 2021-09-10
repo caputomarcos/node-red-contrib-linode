@@ -88,11 +88,11 @@ module.exports = function (RED) {
             msg[container] = res.body
             node.send(msg)
           }).catch((e) => {
-            node.status({ fill: "red", shape: "dot", text: 'Nok!' })
+            node.status({ fill: "red", shape: "dot", text: `${e.status} ${e}` })
             sendError(node, config, msg, e)
           })
       }).catch(e => {
-        node.status({ fill: "red", shape: "dot", text: 'Nok!' })
+        node.status({ fill: "blue", shape: "dot", text: "FetchError" })
         sendError(node, config, msg, e)
       })
       node.status({ fill: "", shape: "", text: '' })
