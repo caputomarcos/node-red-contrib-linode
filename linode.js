@@ -1,6 +1,6 @@
 const Swagger = require('swagger-client')
 
-function sendError (node, config, msg, e) {
+function sendError(node, config, msg, e) {
   // node.error can't save the data we
   if (e.message && isNaN(e.message.substring(0, 1)) && e.status) e.message = e.status + ' ' + e.message
   msg.response = e.response || e
@@ -16,15 +16,15 @@ function sendError (node, config, msg, e) {
 const LINODE_API_URL = "https://www.linode.com/docs/api/openapi.yaml"
 
 module.exports = function (RED) {
-  function Linode (config) {
+  function Linode(config) {
     RED.nodes.createNode(this, config)
     const node = this
 
     node.on('input', function (msg) {
       let container = config.container ? config.container : "linode"
       if (msg.openApi && msg.openApi.container) container = msg.openApi.container
-      let openApiUrl = config.openApiUrl ? config.openApiUrl : LINODE_API_URL
-      if (msg.openApi && msg.openApi.url) openApiUrl = msg.openApi.url
+      let propagate = config.propagate
+      if (msg.propagate) propagate = msg.propagate
       let parameters = {}
       let requestBody = {} // we need a separate parameter for body in OpenApi 3
 
@@ -43,7 +43,7 @@ module.exports = function (RED) {
             return node.error(`Required input for ${param.name} is missing.`, msg)
           }
           if (param.isActive && param.name !== 'Request body') {
-          // if (param.isActive) {
+            // if (param.isActive) {
             parameters[param.name] = evaluatedInput
           }
           if (param.isActive && param.name === 'Request body') {
@@ -66,7 +66,7 @@ module.exports = function (RED) {
       }
 
       // Start Swagger / OpenApi
-      Swagger(openApiUrl).then((client) => {
+      Swagger(LINODE_API_URL).then((client) => {
         node.status({ fill: "yellow", shape: "dot", text: "Retrieving..." })
         client.execute({
           operationId,
@@ -86,13 +86,16 @@ module.exports = function (RED) {
           .then((res) => {
             node.status({ fill: "green", shape: "dot", text: "Ok!" })
             msg[container] = res.body
+            if (propagate === false) delete msg.access_token
             node.send(msg)
           }).catch((e) => {
             node.status({ fill: "red", shape: "dot", text: `${e.status} ${e}` })
+            if (propagate === false) delete msg.access_token
             sendError(node, config, msg, e)
           })
       }).catch(e => {
         node.status({ fill: "blue", shape: "dot", text: "FetchError" })
+        if (propagate === false) delete msg.access_token
         sendError(node, config, msg, e)
       })
       node.status({ fill: "", shape: "", text: '' })
@@ -102,12 +105,7 @@ module.exports = function (RED) {
 
   // create API List
   RED.httpAdmin.get('/getNewOpenApiInfo', (request, response) => {
-    const openApiUrl = request.query.openApiUrl ? request.query.openApiUrl : LINODE_API_URL
-    if (!openApiUrl) {
-      response.send("Missing or invalid openApiUrl parameter 'openApiUrl': " + openApiUrl)
-      return
-    }
-    const decodedUrl = decodeURIComponent(openApiUrl)
+    const decodedUrl = decodeURIComponent(LINODE_API_URL)
     const newApiList = {}
     Swagger(decodedUrl).then((client) => {
       const paths = client.spec.paths

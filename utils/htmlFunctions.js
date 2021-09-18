@@ -1,5 +1,5 @@
-export async function getApiList (openApiUrl) {
-  const url = encodeURI(openApiUrl)
+export async function getApiList() {
+  const url = encodeURI('https://www.linode.com/docs/api/openapi.yaml')
   // server call
   return window.$.get('getNewOpenApiInfo?openApiUrl=' + url, function (response) {
     return response
@@ -9,7 +9,7 @@ export async function getApiList (openApiUrl) {
     })
 }
 
-export function objectHasValues (object) {
+export function objectHasValues(object) {
   return (typeof object === 'object' && Object.keys(object).length > 0 && object.constructor === Object)
 }
 
