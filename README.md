@@ -10,7 +10,7 @@ Inputs
 
 ### Name   -    string
 
-set a manuell name for the node. If no name is set, the node sets the selected operation name.
+If no name is set, the node sets the selected operation name.
 ### Container   -   string
 
 The name of the container that will receive the Linode API object.
